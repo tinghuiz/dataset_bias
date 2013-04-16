@@ -1,0 +1,49 @@
+# -*- Shell-Script -*- #Hint for emacs to open file in shell script mode
+# multiprocessor screen sessions script
+# hacked Up By Tomasz Malisiewicz (tomasz@cmu.edu) on 03/03/2006
+# $Id: animrc,v 1.10 2009/02/09 22:11:35 tmalisie Exp $
+# $Date: 2009/02/09 22:11:35 $
+# $Author: tmalisie $
+# $Revision: 1.10 $
+
+#<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+#<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+#This is written to enable some awesome object recognition 
+# compiled-MATLAB apps to run on a cluster
+# run it like "screen -L -c ~/private/.animrc"
+# -L will enable logging to the web directory
+# and .animrc is this file
+#
+#Note: This file is invoked by sc.sh and should not be ran
+#      alone
+
+#<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+#<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+
+#change emacs conflict key to C-o instead of C-a which will simplify life
+escape ^Oo
+
+#this is the second to last status line that shows info about host
+caption always "C-o %?%F%{= Wr}%:%{=u kR} %?  %h %-024=%{+b} %C%a %D %d %M %Y%{= db}"
+
+#hardstatus is the bottom-most line that has tabs on it .. it changes
+#when we switch tabbs
+hardstatus alwayslastline "%{= kR} %-Lw%{=b Ky} %n%f %t %{-}%+Lw %=%{= dd}"
+
+#call this message something smart 
+#(currently use an environment variable defined in sc.sh)
+sessionname ${CLUSTY_SESSION_NAME}
+
+#dump logs to a url
+logfile /afs/cs.cmu.edu/user/tmalisie/www/screenlogs/mylog.%n.txt
+
+#a new title for default SHELL windows
+shelltitle SHELL
+
+#start the screen virtual term that lets the logger utility run
+screen -fn -t T 0 ./toucher.sh
+
+#now detach here
+detach
