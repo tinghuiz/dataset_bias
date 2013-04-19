@@ -1,0 +1,9 @@
+C = 1 seems to work well for all datasets on all categories.
+
+Test labels for Caltech256 seem problematic
+
+Caltech256 does not have a 'Chair' category
+
+Results tested on  PASCAL2012 are to be evaluated on the server
+
+Results involving ILSVRC2012 are to be added
