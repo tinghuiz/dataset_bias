@@ -1,7 +1,8 @@
-allDatasets = {'ILSVRC2012'};
+% allDatasets = {'Caltech101', 'Caltech256', 'SUN', 'LabelMeSpain'};
 % allDatasets = {'ILSVRC2012'};
-% allDatasets = {'Caltech101'};
-datasetFolder = '/nfs/ladoga_no_backups/users/tinghuiz/eccv12/datasetStore/';
+allDatasets = {'Caltech256'};
+datasetFolder = '/nfs/hn49/tinghuiz/ijcv_bias/datasetStore/';
+cacheFolder = '/nfs/hn49/tinghuiz/ijcv_bias/feature_extract/cache/';
 feature = 'gist';
 
 clear trainlists
@@ -21,11 +22,11 @@ for d = 1 : length(allDatasets)
     for i=1:length(noTestObjects), data.te(noTestObjects(i)).annotation.object = []; end
     
     for i = 1 : length(data.tr)
-        if ~mod(i,100) fprintf('Processing train set of %s: %d/%d\n', currset, i, length(data.tr));end
+        if ~mod(i,1000) fprintf('Processing train set of %s: %d/%d\n', currset, i, length(data.tr));end
         trainlists{d}{i} = fullfile(data.hi, data.tr(i).annotation.folder, data.tr(i).annotation.filename);
     end
     for i = 1 : length(data.te)
-        if ~mod(i,100) fprintf('Processing test set of %s: %d/%d\n', currset, i, length(data.te));end
+        if ~mod(i,1000) fprintf('Processing test set of %s: %d/%d\n', currset, i, length(data.te));end
         testlists{d}{i} = fullfile(data.hi, data.te(i).annotation.folder, data.te(i).annotation.filename);
     end
 end
@@ -33,7 +34,7 @@ end
 fprintf('Start feature extraction...\n');
 addpath(genpath(pwd));
 names = allDatasets;
-c = conf();
+c = conf(cacheFolder);
 c.cores = 0;
 % c.feature_config.sift.dictionary_size = dict_size;
 

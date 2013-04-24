@@ -1,4 +1,4 @@
-function [ap] = myAP(confidence, gt, cls)
+function [ap, prec, rec] = myAP(confidence, gt, cls)
 assert(length(confidence)==length(gt));
 
 cls_idx = (gt==cls);

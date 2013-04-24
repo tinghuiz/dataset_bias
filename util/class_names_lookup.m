@@ -53,3 +53,25 @@ class_names.person = {'pascal_person'};
 class_names.dog = {'pascal_dog'};
 class_names.bird = {'pascal_bird'};
 save([meta_dir, 'PASCAL2012.mat'], 'class_names', '-append');
+
+%% ILSVRC2012
+clear class_names
+meta_file = '/nfs/ladoga_no_backups/users/tinghuiz/datasets/ILSVRC_2012/ILSVRC2012_devkit_t12/data/meta.mat';
+load(meta_file);
+car_id = [256, 257, 267, 268, 269, 270, 272, 273, 274];
+chair_id = [307, 308, 309, 310];
+bird_id = [385:396, 398:439, 441];
+person_id = [1072];
+dog_meta = '/nfs/ladoga_no_backups/users/tinghuiz/datasets/ILSVRC_2012/ILSVRC2012_devkit_t3/data/meta.mat';
+dogset = load(dog_meta);
+dog_id = [];
+for i = 1 : length(dogset.synsets)
+    dog_id = [dog_id, dogset.synsets(i).ILSVRC2012_ID];
+end
+
+class_names.car = id2wnid(car_id, synsets);
+class_names.chair = id2wnid(chair_id, synsets);
+class_names.person = id2wnid(person_id, synsets);
+class_names.dog = id2wnid(dog_id, synsets);
+class_names.bird = id2wnid(bird_id, synsets);
+save([meta_dir, 'ILSVRC2012.mat'], 'class_names', '-append');

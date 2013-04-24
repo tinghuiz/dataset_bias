@@ -1,0 +1,21 @@
+function [p] = config_color(c)
+p.grid_spacing = 4; % distance between grid centers
+p.patch_sizes = [6 8 10 12 14 16]
+
+p.pyramid_levels = 1;
+p.llcknn = 3;
+p.maxsize = 500;
+
+% dictionary parameters
+p.dictionary_size = 50;
+p.num_images = 2000;
+p.descPerImage = 3000;
+p.num_desc = 4000000;
+
+p.train_file = [c.cache 'train_color_' num2str(p.dictionary_size) '.mat'];
+p.test_file = [c.cache 'test_color_' num2str(p.dictionary_size) '.mat'];
+p.dictionary_file = [c.cache 'dictionary_color_' num2str(p.dictionary_size) '.mat'];
+
+tmp = load('w2c.mat');
+p.w2c = tmp.w2c;
+p.num_colors = size(p.w2c, 2);
