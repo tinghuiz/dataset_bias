@@ -1,7 +1,3 @@
-% TO BE FIXED:
-% NOT working for liblinear since liblinear does not output real decision
-% values, thus support vectors can not be fully identified.
-
 cache_size = max([size(pos_feat,1), 2000]);
 
 neg_cache.feat = zeros(cache_size, size(pos_feat,2));
@@ -47,12 +43,12 @@ while 1
     end
     last_f = f;
     if last_f == length(neg_files)
-        mine_ter = mine_iter + 1;
+        mine_iter = mine_iter + 1;
         last_f = 0;
     end
     
     % Update the model
-    fprintf('Updating the model with hard negatives...\n');
+    fprintf('Updating the model with hard negatives... last_f = %d, mine_iter = %d\n', last_f, mine_iter);
     hard_neg_feat = neg_cache.feat(1:neg_cache.cnt, :);
     remainder = size(pos_feat,1) - neg_cache.cnt;
     if remainder > 0

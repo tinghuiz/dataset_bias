@@ -1,9 +1,13 @@
 C = 1 seems to work well for all datasets on all categories.
 
-Test labels for Caltech256 seem problematic
+Why not use equal training size for different datasets?
+1. The degree of bias is also reflected in the size of the dataset: a small dataset tends to be biased as the relatively few samples might not capture the richness of visual world as well as a large dataset.
+2. Even if we do multiple random runs for training sets of equal size, it would still be quite unfair for datasets that are orders of magnitude larger than the smallest data set. For example, we have 30 'dog' samples for Caltech101 and 2000 for ImageNet. If we use a training set of equal size (in this case 30), any random set from ImageNet only gives access to a very 'biased' view of the dataset.
 
-Caltech256 does not have a 'Chair' category
+NOT showing results for Caltech256:
+1.  It does not have the 'chair' class.
+2. Its 'car' class is exactly the same as Caltech101
+3. Results involving the use of Caltech256 look odd (need to tune the C value?)
 
-Results tested on  PASCAL2012 are to be evaluated on the server
-
-Results involving ILSVRC2012 are to be added
+Why not compute mean across columns?
+The test sets are not of equal size, so the AP numbers are not comparable -- computing mean would not make much sense.
