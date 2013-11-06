@@ -12,7 +12,7 @@ ntrain = round(0.7 * npos);
 train_pos = pos_feat(1:ntrain,:);
 valid_pos = pos_feat(ntrain+1:end,:);
 
-num_iter = 5;
+num_iter = 3;
 ap_best = 0;
 clear model;
 for iter = 1 : num_iter

@@ -4,13 +4,7 @@ feature_list = {'gist', 'sift'};
 num_clusters = [3 7 10 20 40 80];
 num_img = 2000;
 num_run = 5;
-NORMALIZED = true;
-
-if NORMALIZED == true
-    res_dir = '/nfs/hn49/tinghuiz/ijcv_bias/dataset_bias/classification_experiments/cluster_purity/main_results/normalized/';
-else
-    res_dir = '/nfs/hn49/tinghuiz/ijcv_bias/dataset_bias/classification_experiments/cluster_purity/main_results/';
-end
+res_dir = '/nfs/hn49/tinghuiz/ijcv_bias/dataset_bias/classification_experiments/cluster_purity/main_results/';
 
 if ~exist(res_dir, 'dir')
     mkdir(res_dir);
@@ -61,80 +55,58 @@ for f = 1 : length(feature_list)
             
             % Compute purity of each cluster
             fprintf('Computing clustering purity...\n');
-            clear percent_table;
-            clear purity;
+            
+            purity = zeros(num_clusters(c),1);
+            percent_table = zeros(num_clusters(c), length(dataset_list));
+            cluster_size = zeros(num_clusters(c), 1);
             for k = 1 : num_clusters(c) % k index clusters
                 idx = find(cluster_label == k);
-                relative_cluster_size = numel(idx)/numel(cluster_label);
                 dlabels = dataset_label(idx);
                 for d = 1 : length(dataset_list)
                     curr_cnt = sum(dlabels == d);
-                    if NORMALIZED == true
-                        percent_table(k,d) = curr_cnt/numel(idx) * relative_cluster_size;
-                    else
-                        percent_table(k,d) = curr_cnt/numel(idx);
-                    end 
+                    percent_table(k,d) = curr_cnt/numel(idx);
                 end
-                %             max_cnt(i) = 0;
-                %             max_d(i) = 0;
-                %             for d = 1 : length(dataset_list)
-                %                 curr_cnt = sum(dlabels == d);
-                %                 if curr_cnt > max_cnt(i)
-                %                     max_cnt(i) = curr_cnt;
-                %                     max_d(i) = d;
-                %                 end
-                %             end
-                %             purity(i) = max_cnt(i)/numel(idx);
+                purity(k) = max(percent_table(k,:));
+                cluster_size(k) = numel(idx);
             end
-            
-            for d = 1 : length(dataset_list)
-                purity(d) = max(percent_table(:,d));
-            end
-            
+            mean_purity = mean(purity);
+            normalized_mean_purity = mean(purity.*(cluster_size/size(dataset_feat,1)));
             fname = sprintf('%s/%s_%s_k%d_r%d.mat', res_dir, exp_name, feature, num_clusters(c), r);
-            save(fname, 'purity', 'percent_table', 'dataset_list');
+            save(fname, 'mean_purity', 'normalized_mean_purity', 'purity', 'percent_table', 'cluster_size');
         end
     end
 end
 
 %% Plot results
 colors = cbrewer('qual', 'Set1', 8);
+figure(1), hold on; grid on;
 for f = 1 : length(feature_list)
     feature = feature_list{f};
-    purity_mean = zeros(length(dataset_list),length(num_clusters));
-    purity_std = zeros(length(dataset_list),length(num_clusters));
+    purity_mean = zeros(1,length(num_clusters));
+    purity_std = zeros(1,length(num_clusters));
     for c = 1 : length(num_clusters)
-        res = zeros(length(dataset_list), num_run);
+        res = zeros(1, num_run);
         for r = 1 : num_run
             fname = sprintf('%s/%s_%s_k%d_r%d.mat', res_dir, exp_name, feature, num_clusters(c), r);
             load(fname);
-            res(:,r) = purity;
+            res(r) = sum(purity.*(cluster_size/sum(cluster_size)));
         end
-        purity_mean(:,c) = mean(res');
-        purity_std(:,c) = std(res');
+        purity_mean(c) = mean(res);
+        purity_std(c) = std(res);
     end
-    
-    figure(f), hold on; grid on;
-    if NORMALIZED == true
-        rand_purity = 1/length(dataset_list) * ones(1, length(num_clusters)) ./ num_clusters;
-    else
-        rand_purity = 1/length(dataset_list) * ones(1, length(num_clusters));
-    end
-    for d = 1 : length(dataset_list)
-        h = errorbar(num_clusters, purity_mean(d,:), purity_std(d,:), '-', 'LineWidth', 3);
-        set(h, 'Color', colors(d,:));
-    end
-    h = errorbar(num_clusters, rand_purity, 0*ones(length(num_clusters),1), '--', 'LineWidth', 3);
-    set(h, 'Color', 'k');
-    xlim([2, 81]);
-    ylim([0, 0.2]);
-    xlabel('Number of clusters', 'FontSize', 24);
-    ylabel('Purity', 'FontSize', 24);
-    set(gca, 'FontSize', 21);
-    if f == 1
-        hleg = legend(dataset_list, 'Chance');
-        set(hleg, 'FontSize', 11)
-    end
-    title(feature, 'FontSize', 21)
+    h = errorbar(num_clusters, purity_mean, purity_std, '-', 'LineWidth', 3);
+    set(h, 'Color', colors(f,:));
 end
 
+rand_purity = 1/length(dataset_list) * ones(1, length(num_clusters));
+h = errorbar(num_clusters, rand_purity, 0*ones(length(num_clusters),1), '--', 'LineWidth', 3);
+set(h, 'Color', 'k');
+hleg = legend(feature_list, 'Chance');
+set(hleg, 'FontSize', 11)
+xlim([2, 81]);
+ylim([0, 0.7]);
+xlabel('Number of clusters', 'FontSize', 24);
+ylabel('Purity', 'FontSize', 24);
+set(gca, 'FontSize', 21);
+
+% title(feature, 'FontSize', 21)

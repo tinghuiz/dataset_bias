@@ -1,8 +1,8 @@
 clear
 exp_name = 'cross_dataset';
-dataset_list = {'Caltech101', 'Caltech256', 'SUN', 'LabelMeSpain', 'PASCAL2007', 'PASCAL2012', 'ILSVRC2012'};
-class_list = {'person', 'dog', 'bird', 'chair', 'car'};
-feature_list = {'gist', 'sift', 'color'};
+dataset_list = {'Caltech101', 'SUN', 'LabelMeSpain', 'PASCAL2007', 'PASCAL2012', 'ILSVRC2012'};
+class_list = {'person', 'bird', 'chair', 'car'};
+feature_list = {'gist', 'sift'};
 C = 10;
 
 res_dir = '/nfs/hn49/tinghuiz/ijcv_bias/dataset_bias/classification_experiments/cross_dataset/main_results/';
