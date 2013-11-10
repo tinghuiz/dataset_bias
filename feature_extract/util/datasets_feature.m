@@ -1,6 +1,6 @@
 function [c] = datasets_feature(names, trainlists, testlists, feature, c)
 if(~exist('c', 'var'))
-    c = conf();
+  c = conf();
 end
 
 % openPool(c.cores);

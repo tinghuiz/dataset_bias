@@ -45,10 +45,11 @@ while(found_dictionary == 0)
       idx = randperm(ndata);
       descriptors = descriptors(idx(1:p.num_desc), :);
     end
-    fprintf('Running k-means, dictionary size %d...', p.dictionary_size);
-    dictionary = litekmeans(descriptors', p.dictionary_size);
+    fprintf('Running k-means, #samples = %d, #features = %d, dictionary size %d...', size(descriptors,1), size(descriptors,2), p.dictionary_size);
+%     dictionary = litekmeans(descriptors', p.dictionary_size);
+    dictionary = kmeansFast(descriptors, p.dictionary_size);
     fprintf('done!\n');
-    dictionary = dictionary';
+%     dictionary = dictionary';
     make_dir(p.dictionary_file);
     fprintf('Saving dictionary: %s\n', p.dictionary_file);
     save(p.dictionary_file, 'dictionary');

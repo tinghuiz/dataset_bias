@@ -26,7 +26,7 @@ OUTPUT_FILER=/lustre/tinghuiz/temp_files/warp_output/${PROCSTRING}.${HOSTNAME}.$
 #cd /lustre/abhinavg/physics_statics/code/code/code
 #cd /nfs/hn26/abhinavg/onega/prob_code
 #cd /nfs/ladoga_no_backups/users/tinghuiz/he-svm/imagenet
-cd /nfs/hn49/tinghuiz/ijcv_bias/dataset_bias/feature_extract
+cd /nfs/hn49/tinghuiz/ijcv_bias/feature_extract
 
 #2.) run a niced matlab script 
 #2a) add all subdirectories

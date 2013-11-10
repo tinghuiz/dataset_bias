@@ -22,13 +22,24 @@ for i=1:pyramid(end)
         idx = cellfun(@(x, y) getIdxY(x, y,start_y, end_y), imageInfo, x_idx, 'UniformOutput', false);
         binIdx = (currentBin-1)*featureSize+1:currentBin*featureSize; 
         pyramidIdx{i, j} = binIdx;
-        temp = cellfun(@maxIdxPascal, integralData, idx, 'UniformOutput', false);
-        for t = 1 : length(temp)
-            if isempty(temp{t})
-                temp{t} = zeros(1, size(temp{t},2));
+        try
+            beta(:, binIdx) = cell2mat(cellfun(@maxIdxPascal, integralData, idx, 'UniformOutput', false));
+        catch
+            fprintf('Tinghui error: j = %d\n', j);
+            temp = cellfun(@maxIdxPascal, integralData, idx, 'UniformOutput', false);
+            emp_idx = cellfun(@isempty, temp);
+            emp_idx = find(emp_idx);
+            for t = 1 : length(temp)
+                if ~isempty(temp{t})
+                    sample_cell = temp{t};
+                    break;
+                end
             end
+            for e = 1 : numel(emp_idx)
+                temp{emp_idx(e)} = sparse(zeros(size(sample_cell)));
+            end
+            beta(:, binIdx) = cell2mat(temp);
         end
-        beta(:, binIdx) = cell2mat(temp);
         currentBin = currentBin + 1;
     end
 end

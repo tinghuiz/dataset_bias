@@ -1,6 +1,6 @@
 % allDatasets = {'ILSVRC2012', 'LabelMeSpain', 'PASCAL2007', 'SUN', 'Caltech101', 'Caltech256', 'PASCAL2012'};
-allDatasets = {'ILSVRC2012'};
-% allDatasets = {'Caltech101'};
+% allDatasets = {'PASCAL2012'};
+allDatasets = {'Caltech256'};
 datasetFolder = '/nfs/hn49/tinghuiz/ijcv_bias/datasetStore/';
 cacheFolder = '/nfs/hn49/tinghuiz/ijcv_bias/feature_extract/cache/';
 feature = 'sift';
@@ -37,7 +37,7 @@ addpath(genpath(pwd));
 names = allDatasets;
 c = conf(cacheFolder);
 c.cores = 0;
-c.batch_size = 20;
+c.batch_size = 100;
 c.feature_config.sift.dictionary_size = dict_size;
 c.feature_config.sift.grid_spacing = 6;
 c.feature_config.sift.patch_sizes = [8 16 24];
