@@ -1,4 +1,6 @@
 cache_size = max([size(pos_feat,1), 2000]);
+max_mine_iter = 1;
+mine_iter = 1;
 
 neg_cache.feat = zeros(cache_size, size(pos_feat,2));
 neg_cache.cnt = 0;
@@ -12,12 +14,14 @@ while 1
         fprintf('Processing: %d/%d\n', f, length(neg_files));
         neg = load(neg_files{f});
         neg = neg.class_feat;
-        [~, ~, ~] = predict(double(-ones(size(neg,1),1)), sparse(double(neg)), model, '-b 1');
+%         [~, ~, ~] = predict(double(-ones(size(neg,1),1)), sparse(double(neg)), model, '-b 1');
 %         dec_values = dec_values(:, model.Label==1);
         dec_values = [neg, ones(size(neg,1),1)] * model.w';
         hard_idx = find(dec_values >= -1);
-        [~, sort_idx] = sort(dec_values(hard_idx), 'descend');
-        hard_idx = hard_idx(sort_idx);
+        pm = randperm(numel(hard_idx));
+        hard_idx = hard_idx(pm);
+%         [~, sort_idx] = sort(dec_values(hard_idx), 'descend');
+%         hard_idx = hard_idx(sort_idx);
         
         % Remove hard negatives that are already in the cache
         exist_idx = find(neg_cache.cls_ind == f);
@@ -25,11 +29,11 @@ while 1
         hard_idx = hard_idx(in_cache == 0);
         
         num_kept = min([numel(hard_idx), cache_size - numel(neg_cache.cls_ind)]);
-        if num_kept > 100
-            num_kept = 100;
+        if num_kept > 20
+            num_kept = 20;
         end
         
-        fprintf('#hard negatives: %d. #in cache: %d. #kept: %d\n', numel(sort_idx), numel(exist_idx), num_kept);
+        fprintf('#hard negatives: %d. #in cache: %d. #kept: %d\n', numel(hard_idx), numel(exist_idx), num_kept);
         hard_idx = hard_idx(1:num_kept);
         cnt = neg_cache.cnt;
         neg_cache.feat(cnt+1:cnt+numel(hard_idx),:) = neg(hard_idx,:);
@@ -68,12 +72,12 @@ while 1
     dec_values = [hard_neg_feat, ones(size(hard_neg_feat,1),1)] * model.w';
     
     hard_idx = find(dec_values >= -1);
-    min_to_keep = floor(0.5 * neg_cache.cnt); % Keep at least half of the previous hard negatives set
-    if numel(hard_idx) < min_to_keep
-        [~, sort_idx] = sort(dec_values, 'descend');
-        hard_end = find(dec_values(sort_idx) == min(dec_values(hard_idx)));
-        hard_idx = [hard_idx; sort_idx(hard_end+1:min_to_keep - numel(hard_idx) + hard_end)]; 
-    end
+%     min_to_keep = floor(0.5 * neg_cache.cnt); % Keep at least half of the previous hard negatives set
+%     if numel(hard_idx) < min_to_keep
+%         [~, sort_idx] = sort(dec_values, 'descend');
+%         hard_end = find(dec_values(sort_idx) == min(dec_values(hard_idx)));
+%         hard_idx = [hard_idx; sort_idx(hard_end+1:min_to_keep - numel(hard_idx) + hard_end)]; 
+%     end
     tmp_feat = neg_cache.feat(hard_idx,:);
     neg_cache.cls_ind = neg_cache.cls_ind(hard_idx);
     neg_cache.img_ind = neg_cache.img_ind(hard_idx);
@@ -86,4 +90,8 @@ while 1
     if mine_iter > max_mine_iter || neg_cache.cnt >= cache_size
         break;
     end
+    
+    [~, ~, dec_values] = predict(double(test_labels'), sparse(test_feat), model, '-b 1');
+        ap = myAP(dec_values(:, model.Label==1), test_labels', 1);
+        fprintf('#neg kept after mining: %d, test ap = %f\n', numel(hard_idx), ap);
 end

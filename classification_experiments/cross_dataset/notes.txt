@@ -11,3 +11,5 @@ NOT showing results for Caltech256:
 
 Why not compute mean across columns?
 The test sets are not of equal size, so the AP numbers are not comparable -- computing mean would not make much sense.
+
+ILSVRC2012 test set is built from the original validation set (+Person class downloaded from the imagenet website).

@@ -20,21 +20,21 @@ default_setup;
 
 num_comb = length(dataset_list) * length(dataset_list) * length(class_list) * length(feature_list);
 
-while length(dir([root_lock_dir, 'lock_' exp_name '*'])) < num_comb
+% while length(dir([root_lock_dir, 'lock_' exp_name '*'])) < num_comb
     myRandomize;
     train_d = randi(length(dataset_list),1);
     test_d = randi(length(dataset_list),1);
     f = randi(length(feature_list),1);
     c = randi(length(class_list),1);
-%     train_d = 3;
-    test_d = 1;
-    f = 2;
-    c= 5;
+    train_d = 5;
+    test_d = 6;
+    f = 1;
+    c= 1;
     
     lock = sprintf('%s/lock_%s_%s_%s_%s_%s/', root_lock_dir, exp_name, dataset_list{train_d}, dataset_list{test_d}, feature_list{f}, class_list{c});
-    if mymkdir_dist(lock) == 0
-        continue;
-    end
+%     if mymkdir_dist(lock) == 0
+%         continue;
+%     end
 
     fprintf('Processing: %s_%s_%s_%s\n',dataset_list{train_d},dataset_list{test_d},feature_list{f},class_list{c});
     
@@ -145,7 +145,7 @@ while length(dir([root_lock_dir, 'lock_' exp_name '*'])) < num_comb
         end
     end
     
-end
+% end
 
 % for train_d = 1 : length(dataset_list)
 %     for test_d = 1 : length(dataset_list)

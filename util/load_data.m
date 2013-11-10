@@ -1,4 +1,4 @@
-function [train_feat, test_feat, train_labels, test_labels, train_bbox] = load_data(dataset, class, feature)
+function [train_feat, test_feat, train_labels, test_labels] = load_data(dataset, class, feature)
 
 default_setup;
 
@@ -52,19 +52,21 @@ for j = 1 : length(train_labels)
     end
 end
 
-
-    
-        if(train_labels{j}(k)==1)
-          pos(pos_idx).im = fullfile(data{i}.hi, curr_example.folder, curr_example.filename);
-          pos(pos_idx).x1 = double(min(curr_example.object(k).polygon.x));
-          pos(pos_idx).x2 = double(max(curr_example.object(k).polygon.x));
-          pos(pos_idx).y1 = double(min(curr_example.object(k).polygon.y));
-          pos(pos_idx).y2 = double(max(curr_example.object(k).polygon.y));
-          pos(pos_idx).bias = i;
-          
-          pos_idx = pos_idx + 1;
-        end
-
+% try
+%     
+%         if(train_labels{j}(k)==1)
+%           pos(pos_idx).im = fullfile(data{i}.hi, curr_example.folder, curr_example.filename);
+%           pos(pos_idx).x1 = double(min(curr_example.object(k).polygon.x));
+%           pos(pos_idx).x2 = double(max(curr_example.object(k).polygon.x));
+%           pos(pos_idx).y1 = double(min(curr_example.object(k).polygon.y));
+%           pos(pos_idx).y2 = double(max(curr_example.object(k).polygon.y));
+%           pos(pos_idx).bias = i;
+%           
+%           pos_idx = pos_idx + 1;
+%         end
+% catch
+%     ass = 1;
+% end
 % Transform the negative labels to be -1
 train_labels = train_labels * 2 - 1;
 test_labels = test_labels * 2 - 1;

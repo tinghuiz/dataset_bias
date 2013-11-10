@@ -5,7 +5,7 @@ class_list = {'person', 'bird', 'chair', 'car'};
 model_dir = '/nfs/hn49/tinghuiz/ijcv_bias/dataset_bias/classification_experiments/cross_dataset/main_results/';
 result_dir = '/nfs/hn49/tinghuiz/ijcv_bias/dataset_bias/classification_experiments/neg_set_bias/main_results/';
 num_run = 3;
-num_neg_per_set = 3200;
+num_neg_per_set = 1324; % Limited by the minimum number among all datasets
 
 if ~exist(result_dir, 'dir')
     mkdir(result_dir);
@@ -26,11 +26,16 @@ for r = 1 : num_run
                 neg_files = neg_files(pm);
                 num_neg_per_file = 50;
                 clear neg_feat;
-                for i = 1 : num_neg_per_set/num_neg_per_file
+                nload = ceil(num_neg_per_set/num_neg_per_file);
+                for i = 1 : nload
                     neg = load(neg_files{i});
                     neg = neg.class_feat;
                     pm = randperm(size(neg,1));
-                    neg_feat{i} = neg(pm(1:num_neg_per_file),:);
+                    if i == nload
+                        neg_feat{i} = neg(pm(1:mod(num_neg_per_set, num_neg_per_file)),:);
+                    else
+                        neg_feat{i} = neg(pm(1:num_neg_per_file),:);
+                    end
                 end
                 neg_feat = double(cell2mat(neg_feat'));
             else
@@ -64,8 +69,13 @@ for r = 1 : num_run
                 end
                 pos_feat = test_feat(test_labels == 1, :);
                 num_neg_test = sum(test_labels == -1);
-                test_feat = [pos_feat; world_neg_feat(1:num_neg_test,:)];
-                test_labels = [ones(size(pos_feat,1),1); -ones(num_neg_test,1)];
+%                 if num_neg_test > size(world_neg_feat,1)
+%                     org_neg
+%                     test_feat = [pos_feat; world_neg_feat; ];
+%                 else
+                    test_feat = [pos_feat; world_neg_feat(1:num_neg_test,:)];
+                    test_labels = [ones(size(pos_feat,1),1); -ones(num_neg_test,1)];
+%                 end
                 [pred_labels, ~, dec_values] = predict(double(test_labels), sparse(test_feat), model, '-b 1');
                 new_ap = myAP(dec_values(:, model.Label==1), test_labels, 1);
                 drop_percent = (ap - new_ap)/ap;

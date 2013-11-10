@@ -42,23 +42,33 @@ end
 if strcmp(imgset, 'test')
     test_set_file = [feat_dir, 'test_set.mat'];
     load(test_set_file);
-    all_valid_class = {'car', 'person', 'dog', 'bird', 'chair'};
-    all_valid_i = zeros(1, size(test_feat,1));
-    for i = 1 : length(all_valid_class)
-        valid_class = class_names.(all_valid_class{i});
-        this_test_labels = double(arrayfun(@(x) sum(arrayfun(@(y) ~cell_isempty(strfind(valid_class, y.class)), x.annotation.object))>0, test_anno));
-        all_valid_i = all_valid_i | this_test_labels;
-    end
-    neg_i = find(all_valid_i == 0);
-    % Only keep 5000 negative examples (so the AP does not look too
-    % shabby).
-    all_valid_i(neg_i(1:5000)) = 1;
     test_labels = double(arrayfun(@(x) sum(arrayfun(@(y) ~cell_isempty(strfind(class, y.class)), x.annotation.object))>0, test_anno));
     test_labels = test_labels * 2 - 1;
     test_feat = double(test_feat);
     pos_feat = [];
     neg_files = [];
-    test_labels = test_labels(all_valid_i);
-    test_feat = test_feat(all_valid_i, :);
 end
+
+% if strcmp(imgset, 'test')
+%     test_set_file = [feat_dir, 'test_set.mat'];
+%     load(test_set_file);
+%     all_valid_class = {'car', 'person', 'bird', 'chair'};
+%     all_valid_i = zeros(1, size(test_feat,1));
+%     for i = 1 : length(all_valid_class)
+%         valid_class = class_names.(all_valid_class{i});
+%         this_test_labels = double(arrayfun(@(x) sum(arrayfun(@(y) ~cell_isempty(strfind(valid_class, y.class)), x.annotation.object))>0, test_anno));
+%         all_valid_i = all_valid_i | this_test_labels;
+%     end
+%     neg_i = find(all_valid_i == 0);
+%     % Only keep 5000 negative examples (so the AP does not look too
+%     % shabby).
+%     all_valid_i(neg_i(1:5000)) = 1;
+%     test_labels = double(arrayfun(@(x) sum(arrayfun(@(y) ~cell_isempty(strfind(class, y.class)), x.annotation.object))>0, test_anno));
+%     test_labels = test_labels * 2 - 1;
+%     test_feat = double(test_feat);
+%     pos_feat = [];
+%     neg_files = [];
+%     test_labels = test_labels(all_valid_i);
+%     test_feat = test_feat(all_valid_i, :);
+% end
 

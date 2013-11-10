@@ -1,0 +1,1 @@
+The chance performance is not the same for different number of clusters used, because we take the ‘max’ operation when computing the purity of a cluster. As the number of clusters increases, it’s easier to get more pure clusters by chance.
